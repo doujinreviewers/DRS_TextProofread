@@ -23,6 +23,7 @@
     "node-sass": "^6.0.1",
     "nw": "^0.58.0",
     "nwjs-builder-phoenix": "^1.15.0",
+    "terser-webpack-plugin": "^5.2.5",
     "vue": "^3.2.22",
     "vue-loader": "^16.8.3",
     "webpack": "^5.62.1",

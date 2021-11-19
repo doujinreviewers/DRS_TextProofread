@@ -1,6 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const { VueLoaderPlugin } = require('vue-loader')
+const TerserPlugin = require("terser-webpack-plugin")
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
@@ -44,5 +45,13 @@ module.exports = {
       __VUE_OPTIONS_API__: true,
       __VUE_PROD_DEVTOOLS__: false
     })
-  ]
+  ],
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        test: /\.js(\?.*)?$|\.prebundleapp/i,
+      }),
+    ],
+  },
 }
