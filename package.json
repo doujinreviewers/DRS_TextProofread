@@ -2,9 +2,13 @@
   "name": "tkool",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.html",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "build-plugin": "webpack --config webpack.config.plugin.js",
+    "build-pro": "webpack --mode production",
+    "build-plugin-pro": "webpack --config webpack.config.plugin.js --mode production",
+    "build-all": "npm run build-pro && npm run build-plugin-pro"
   },
   "keywords": [],
   "author": "",
@@ -12,8 +16,17 @@
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.16.0",
+    "@vue/compiler-sfc": "^3.2.22",
     "babel-loader": "^8.2.3",
+    "css-loader": "^6.5.1",
+    "nanoid": "^3.1.30",
+    "node-sass": "^6.0.1",
+    "nw": "^0.58.0",
+    "nwjs-builder-phoenix": "^1.15.0",
+    "vue": "^3.2.22",
+    "vue-loader": "^16.8.3",
     "webpack": "^5.62.1",
-    "webpack-cli": "^4.9.1"
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.5.0"
   }
 }

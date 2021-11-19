@@ -1,1 +1,0 @@
-console.info(nw.process.versions.nw);
