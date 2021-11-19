@@ -9,6 +9,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'src/assets'),
     filename: 'DRS_TextProofread.prebundleapp',
+    publicPath: '',
   },
   resolve: {
     extensions: [

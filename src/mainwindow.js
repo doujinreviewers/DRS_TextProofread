@@ -19,6 +19,8 @@ let app_html = `
 const html_filename = "DRS_TextProofread_"+nanoid()+".html";
 fs.writeFileSync(path.join(process.cwd(), html_filename), app_html);
 nw.Window.open(html_filename, {}, function(win) {
+  win.width = 1280;
+  win.height = 800;
   win.on('close', function () {
     try {
       fs.unlinkSync(path.join(process.cwd(), html_filename));
