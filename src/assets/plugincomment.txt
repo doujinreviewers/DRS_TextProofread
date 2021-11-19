@@ -1,0 +1,10 @@
+/*:ja
+ * @target MZ
+ * @plugindesc ゲーム内のテキストの校正を試みます。
+ * @author 同人Reviewers
+ * 
+ * @help DRS_TextProofread.js
+ * このプラグインをONにした状態でツクール上の「ゲーム」から「テストプレイ」を実行してください。
+ * このプラグインにプラグインコマンドはありません。
+ * 
+ */
