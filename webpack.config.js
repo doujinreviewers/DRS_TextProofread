@@ -5,9 +5,9 @@ const TerserPlugin = require("terser-webpack-plugin")
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
-  entry: './src/index.js',
+  entry: './src/app/index.js',
   output: {
-    path: path.resolve(__dirname, 'src/assets'),
+    path: path.resolve(__dirname, 'src/plugin/assets'),
     filename: 'DRS_TextProofread.prebundleapp',
     publicPath: '',
   },
