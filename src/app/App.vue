@@ -50,9 +50,6 @@ export default {
   data() {
       return {
           message: "Hello Vue!",
-          contents: "",
-          error: "",
-          aaaaa: "",
       }
   },
   methods: {
@@ -67,10 +64,19 @@ export default {
       } catch (err) {
         this.error = true;
       }
+    },
+    execute: function () {
+      let connection = new WebSocket("ws://192.168.0.16:8080")
+        connection.onmessage = function(event) {
+      }
+
+      connection.onopen = function(event) {
+        connection.send("token send");
+      }
     }
   },
   mounted() {
-    // this.getCurrentDirectory()
+    this.execute()
   },
 }
 </script>
