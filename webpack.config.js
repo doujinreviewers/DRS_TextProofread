@@ -1,4 +1,5 @@
 const path = require('path')
+const fs = require('fs');
 const webpack = require('webpack')
 const { VueLoaderPlugin } = require('vue-loader')
 const TerserPlugin = require("terser-webpack-plugin")
@@ -28,6 +29,20 @@ module.exports = {
         test: /\.vue$/,
         loader: "vue-loader"
       },
+      {
+        test: /\.prebundleapp/,
+        type: 'asset',
+        parser: {
+          dataUrlCondition: (source, { filename, module }) => {
+            return true;
+          },
+        },
+        generator: {
+          dataUrl: (content) => {
+            return content.toString();
+          },
+        },
+      }
     ]
   },
   plugins: [
@@ -35,13 +50,21 @@ module.exports = {
     new webpack.DefinePlugin({
       __VUE_OPTIONS_API__: true,
       __VUE_PROD_DEVTOOLS__: false
-    })
+    }),
+    new class RenameTextlintWorkerFile {
+      apply(compiler) {
+        compiler.hooks.beforeRun.tap('RenameTextlintWorkerFile', compilation => {
+          fs.renameSync(path.join(__dirname, 'src', 'app', 'assets', 'textlint-worker.js'), path.join(__dirname, 'src', 'app', 'assets', 'textlint-worker.prebundleapp'))
+        })
+      }
+    }()
   ],
   optimization: {
     minimize: true,
     minimizer: [
       new TerserPlugin({
         test: /\.js(\?.*)?$|\.prebundleapp/i,
+        extractComments: false,
       }),
     ],
   },

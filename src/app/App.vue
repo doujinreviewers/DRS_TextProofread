@@ -65,6 +65,9 @@
 </template>
 
 <script>
+import textlintWorker from "./assets/textlint-worker.prebundleapp";
+import { makeJson } from "./lib/engine";
+
 export default {
   name: "App",
   data() {
@@ -98,7 +101,21 @@ export default {
           this.results.push(JSON.parse(event.data));
         }.bind(this)
       }else{
-
+        const path = nw.require('path');
+        const url = URL.createObjectURL(
+          new Blob([textlintWorker], { type: "text/javascript" })
+        );
+        const worker = new Worker(url);
+        worker.addEventListener('message', function (event) {
+          if (event.data.command === "lint:result") {
+            this.results.push(JSON.parse(makeJson(event.data.result)));
+          }
+        }.bind(this));
+        worker.postMessage({
+          command: "lint",
+          text: "僕はは行くことにした。",
+          ext: ".md"
+        })
       }
     },
     stop: function () {
@@ -106,6 +123,9 @@ export default {
     }
   },
   mounted() {
+    // lintText('私はJavaScriptが大好きです')
+    //   .then((result) => console.log(result))
+    //   .catch((err) => console.log(err));
   },
 }
 </script>
