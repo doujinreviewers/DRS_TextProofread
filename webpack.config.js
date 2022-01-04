@@ -54,7 +54,9 @@ module.exports = {
     new class RenameTextlintWorkerFile {
       apply(compiler) {
         compiler.hooks.beforeRun.tap('RenameTextlintWorkerFile', compilation => {
-          fs.renameSync(path.join(__dirname, 'src', 'app', 'assets', 'textlint-worker.js'), path.join(__dirname, 'src', 'app', 'assets', 'textlint-worker.prebundleapp'))
+          if(fs.existsSync(path.join(__dirname, 'src', 'app', 'assets', 'textlint-worker.js'))){
+            fs.renameSync(path.join(__dirname, 'src', 'app', 'assets', 'textlint-worker.js'), path.join(__dirname, 'src', 'app', 'assets', 'textlint-worker.prebundleapp'))
+          }
         })
       }
     }()

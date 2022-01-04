@@ -9,7 +9,8 @@
     "build-pro": "webpack --mode production",
     "build-plugin-pro": "webpack --config webpack.config.plugin.js --mode production",
     "build-textlint": "npx textlint-script-compiler --output-dir ./src/app/assets/ --metadataName 'offline_server' --metadataNamespace 'http://localhost:3000/' --metadataHomepage 'http://localhost:3000/'",
-    "build-all": "npm run build-textlint && npm run build-pro && npm run build-plugin-pro"
+    "build-all": "npm run build-textlint && npm run build-pro && npm run build-plugin-pro",
+    "build-all-dev": "npm run build-pro && npm run build-plugin-pro"
   },
   "keywords": [],
   "author": "同人Reviewers",

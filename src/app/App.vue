@@ -9,7 +9,7 @@
           </label>
           <label class="inline-flex items-center w-7/12">
             <input type="radio" class="text-indigo-600" name="mode" value="1" v-model="mode">
-            <span class="">簡易（プラグイン上でチェック）</span>
+            <span class="">簡易（プラグイン上でチェック。サ入れ表現、サ抜き表現、れ足す言葉しか検出できません）</span>
           </label>
         </div>
         <div class="flex justify-center items-center border-b-2 border-gray-300 py-2">
@@ -66,7 +66,7 @@
 
 <script>
 import textlintWorker from "./assets/textlint-worker.prebundleapp";
-import { makeJson } from "./lib/engine";
+import { Engine, formatResult } from "./lib/engine";
 
 export default {
   name: "App",
@@ -75,7 +75,28 @@ export default {
       results: [],
       connection: null,
       targets: [],
-      mode: "",
+      mode: "0",
+      lint_result: {},
+      worker: null,
+      engine: null,
+      current_data: {},
+      run: false,
+    }
+  },
+  watch: {
+    lint_result: function (newVal, oldVal) {
+      console.info(this.current_data);
+      if(this.run){
+        if(newVal.messages && newVal.messages.length != 0){
+          this.results.push(formatResult(this.current_data.location, newVal, this.current_data.text));
+        }
+        this.current_data = this.engine.next();
+        if(this.current_data == "EOF"){
+          return;
+        }else{
+          this.postGameText(this.current_data.text);
+        }
+      }
     }
   },
   methods: {
@@ -85,8 +106,20 @@ export default {
       let data_dir = path.join(process.cwd(), 'data');
       this.connection.send(JSON.stringify({'filename':filename, 'json_data':JSON.parse(fs.readFileSync(path.join(data_dir, filename)))}));
     },
+    postGameText: function(text){
+      this.worker.postMessage({
+        command: "lint",
+        text: text,
+        ext: ".md"
+      })
+    },
     execute: function () {
-      this.results = []
+      if(this.targets.length == 0){
+        return;
+      }
+      this.run = true;
+      this.results = [];
+      this.lint_result = {};
 
       if(this.mode == "0"){
         this.connection = new WebSocket("ws://192.168.0.16:8080");
@@ -101,31 +134,29 @@ export default {
           this.results.push(JSON.parse(event.data));
         }.bind(this)
       }else{
-        const path = nw.require('path');
         const url = URL.createObjectURL(
           new Blob([textlintWorker], { type: "text/javascript" })
         );
-        const worker = new Worker(url);
-        worker.addEventListener('message', function (event) {
+        this.worker = new Worker(url);
+        this.worker.addEventListener('message', function (event) {
           if (event.data.command === "lint:result") {
-            this.results.push(JSON.parse(makeJson(event.data.result)));
+            this.lint_result = event.data.result;
           }
         }.bind(this));
-        worker.postMessage({
-          command: "lint",
-          text: "僕はは行くことにした。",
-          ext: ".md"
-        })
+        this.engine = new Engine(this.targets.concat());
+        this.current_data = this.engine.next();
+        this.postGameText(this.current_data.text);
       }
     },
     stop: function () {
-      this.connection.close()
+      this.run = false;
+      if(this.mode == "0"){
+        this.connection.close()
+      }
+    },
+    finish: function () {
+
     }
-  },
-  mounted() {
-    // lintText('私はJavaScriptが大好きです')
-    //   .then((result) => console.log(result))
-    //   .catch((err) => console.log(err));
   },
 }
 </script>
