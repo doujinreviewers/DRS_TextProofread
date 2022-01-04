@@ -44,8 +44,7 @@ export class Engine {
         json.forEach(d => {
           if(d){
             this.queue.push({
-              target: filename,
-              location: "ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
+              location: "アクター"+'\r\n'+"ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
               text: d.profile
             })
           }
@@ -55,8 +54,7 @@ export class Engine {
         json.forEach(d => {
           if(d){
             this.queue.push({
-              target: filename,
-              location: "ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
+              location: "防具"+'\r\n'+"ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
               text: d.description
             })
           }
@@ -64,11 +62,11 @@ export class Engine {
         break;
       case 'Classes.json':
       case 'Enemies.json':
+        let name = (filename == 'Classes.json') ? '職業' : '敵キャラ'
         json.forEach(d => {
           if(d){
             this.queue.push({
-              target: filename,
-              location: "ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
+              location: name+'\r\n'+"ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
               text: d.note
             })
           }
@@ -92,8 +90,7 @@ export class Engine {
               }
               if(text && (d.list.length == i || (textflg && l.code != 401) || l.code == 102)){
                 this.queue.push({
-                  target: filename,
-                  location: "ID:"+d.id.toString().padStart(4, '0'),
+                  location: "コモンイベント"+'\r\n'+"ID:"+d.id.toString().padStart(4, '0'),
                   text: text
                 })
                 text = "";
@@ -107,8 +104,7 @@ export class Engine {
         json.forEach(d => {
           if(d){
             this.queue.push({
-              target: filename,
-              location: "ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
+              location: "アイテム"+'\r\n'+"ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
               text: d.description+'\r\n'+d.note
             })
           }
@@ -117,7 +113,7 @@ export class Engine {
       case 'MapInfos.json':
         json.forEach(d => {
           if(d){
-            let mapname = "ID:"+d.id.toString().padStart(4, '0')+" "+d.name;
+            let mapname = "マップ"+'\r\n'+"ID:"+d.id.toString().padStart(4, '0')+" "+d.name;
             let eventname = "";
             let pageinfo = "";
             
@@ -142,7 +138,6 @@ export class Engine {
                     }
                     if(text && (page.list.length == i || (textflg && l.code != 401) || l.code == 102)){
                       this.queue.push({
-                        target: filename,
                         location: mapname+'\r\n'+eventname+'\r\n'+pageinfo,
                         text: text
                       })
@@ -160,8 +155,7 @@ export class Engine {
         json.forEach(d => {
           if(d){
             this.queue.push({
-              target: filename,
-              location: "ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
+              location: "スキル"+'\r\n'+"ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
               text: d.description+'\r\n'+d.message1+'\r\n'+d.message2+'\r\n'+d.note
             })
           }
@@ -171,8 +165,7 @@ export class Engine {
         json.forEach(d => {
           if(d){
             this.queue.push({
-              target: filename,
-              location: "ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
+              location: "ステート"+'\r\n'+"ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
               text: d.message1+'\r\n'+d.message2+'\r\n'+d.message3+'\r\n'+d.message4+'\r\n'+d.note
             })
           }
@@ -181,36 +174,31 @@ export class Engine {
       case 'System.json':
         json.armorTypes.forEach((armor, i) => {
           this.queue.push({
-            target: filename,
-            location:"防具タイプ",
+            location:"システム"+'\r\n'+"防具タイプ",
             text: i.toString().padStart(3, '0')+" "+armor
           })
         })
         json.elements.forEach((element, i) => {
           this.queue.push({
-            target: filename,
-            location:"属性",
+            location:"システム"+'\r\n'+"属性",
             text: i.toString().padStart(3, '0')+" "+element
           })
         })
         json.equipTypes.forEach((equip, i) => {
           this.queue.push({
-            target: filename,
-            location:"装備タイプ",
+            location:"システム"+'\r\n'+"装備タイプ",
             text: i.toString().padStart(3, '0')+" "+equip
           })
         })
         json.skillTypes.forEach((skill, i) => {
           this.queue.push({
-            target: filename,
-            location:"スキルタイプ",
+            location:"システム"+'\r\n'+"スキルタイプ",
             text: i.toString().padStart(3, '0')+" "+skill
           })
         })
         json.weaponTypes.forEach((weapon, i) => {
           this.queue.push({
-            target: filename,
-            location:"武器タイプ",
+            location:"システム"+'\r\n'+"武器タイプ",
             text: i.toString().padStart(3, '0')+" "+weapon
           })
         })
@@ -235,8 +223,7 @@ export class Engine {
                 }
                 if(text && (page.list.length == i || (textflg && l.code != 401) || l.code == 102)){
                   this.queue.push({
-                    target: filename,
-                    location: "ID:"+d.id.toString().padStart(4, '0')+" "+d.name+'\r\n'+pageinfo,
+                    location: "敵グループ"+'\r\n'+"ID:"+d.id.toString().padStart(4, '0')+" "+d.name+'\r\n'+pageinfo,
                     text: text
                   })
                   text = "";
@@ -251,8 +238,7 @@ export class Engine {
         json.forEach(d => {
           if(d){
             this.queue.push({
-              target: filename,
-              location: "ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
+              location: "武器"+'\r\n'+"ID:"+d.id.toString().padStart(4, '0')+" "+d.name,
               text: d.description+'\r\n'+d.note
             })
           }
