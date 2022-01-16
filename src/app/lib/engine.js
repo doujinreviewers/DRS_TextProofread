@@ -1,19 +1,25 @@
+import escapeHtml from 'escape-html';
+import diff from 'fast-diff';
+
 export function formatResult(location, result, pretext){
   let formatted = {location:location, text: pretext, suggestion:""}
-  if(result.messages[0].message == "不要な「さ」が挿入されています。" || result.messages[0].message == "れ足す言葉を使用しています。"){
-    formatted.suggestion = strDel(pretext, result.messages[0].index+1)
-  }else if(result.messages[0].message == "「さ」が抜けています。"){
-    formatted.suggestion = strAdd(pretext, result.messages[0].index+1, "さ")
-  }
+  formatted.suggestion = pretext.slice(0, result.messages[0].fix.range[0]) + result.messages[0].fix.text + pretext.slice(result.messages[0].fix.range[1]);
+  let pre = "";
+  let sug = "";
+  let clean = diff(escapeHtml(formatted.text), escapeHtml(formatted.suggestion));
+  clean.forEach(c => {
+    if(c[0] === diff.EQUAL){
+      pre += c[1]
+      sug += c[1]
+    }else if(c[0] === diff.INSERT){
+      sug+='<span class="text-blue-600 underline decoration-solid">'+c[1]+'</span>'
+    }else{
+      pre+='<span class="text-red-600 underline decoration-solid">'+c[1]+'</span>'
+    }
+  });
+  formatted.text = pre;
+  formatted.suggestion = sug;
   return formatted
-}
-
-function strDel(str, idx){
-  return str.slice(0, idx-1) + str.slice(idx);
-}
-
-function strAdd(str, idx, add){
-  return str.slice(0, idx) + add + str.slice(idx);
 }
 
 export class Engine {

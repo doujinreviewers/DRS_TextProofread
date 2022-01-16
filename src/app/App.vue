@@ -9,7 +9,7 @@
           </label>
           <label class="inline-flex items-center w-7/12" :class="{'cursor-not-allowed': disable}">
             <input type="radio" class="text-indigo-600" name="mode" value="1" v-model="mode" :disabled="disable">
-            <span class="">簡易（プラグイン上でチェック。サ入れ表現、サ抜き表現、れ足す言葉しか検出できません）</span>
+            <span class="">簡易（プラグイン上でチェック）</span>
           </label>
         </div>
         <div class="flex justify-center items-center border-b-2 border-gray-300 py-2">
@@ -73,8 +73,8 @@
       <tbody>
         <tr v-for="(result, index) in results">
           <td class="border border-neutral-500 whitespace-pre-wrap break-words">{{result.location}}</td>
-          <td class="border border-neutral-500 whitespace-pre-wrap break-words">{{result.text}}</td>
-          <td class="border border-neutral-500 whitespace-pre-wrap break-words">{{result.suggestion}}</td>
+          <td class="border border-neutral-500 whitespace-pre-wrap break-words" v-html="result.text"></td>
+          <td class="border border-neutral-500 whitespace-pre-wrap break-words" v-html="result.suggestion"></td>
         </tr>
       </tbody>
     </table>
