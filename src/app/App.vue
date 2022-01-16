@@ -138,6 +138,16 @@ export default {
       const path = nw.require('path');
       let data_dir = path.join(process.cwd(), 'data');
       this.connection.send(JSON.stringify({'filename':filename, 'json_data':JSON.parse(fs.readFileSync(path.join(data_dir, filename)))}));
+      if(filename == "MapInfos.json"){
+        let json = JSON.parse(fs.readFileSync(path.join(data_dir, filename)));
+        json.forEach(d => {
+          if(d){
+            let map_name = `Map${d.id.toString().padStart(3, '0')}.json`;
+            let map_json = JSON.parse(fs.readFileSync(path.join(data_dir, map_name)));
+            this.connection.send(JSON.stringify({'filename':map_name, 'json_data':map_json}));
+          };
+        });
+      }
     },
     postGameText: function(text){
       this.worker.postMessage({
