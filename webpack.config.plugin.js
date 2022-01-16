@@ -4,7 +4,7 @@ const path = require('path')
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
-  entry: './src/mainwindow.js',
+  entry: './src/plugin/mainwindow.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'DRS_TextProofread.js',
@@ -18,16 +18,6 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.m?js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: ['@babel/preset-env']
-          }
-        }
-      },
       {
         test: /\.prebundleapp/,
         type: 'asset',
@@ -50,7 +40,7 @@ module.exports = {
         compiler.hooks.afterEmit.tap('AddPluginComments', compilation => {
           const { options: { output: { path: dir, filename } } } = compilation
           const output_file_path = path.resolve(dir, filename)
-          const pc = path.resolve(__dirname, 'src', 'assets', 'plugincomment.txt')
+          const pc = path.resolve(__dirname, 'src', 'plugin', 'assets', 'plugincomment.txt')
           fs.writeFileSync(output_file_path, fs.readFileSync(pc)+os.EOL+fs.readFileSync(output_file_path))
         })
       }

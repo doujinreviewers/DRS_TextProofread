@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { nanoid } from 'nanoid'
 import prebundlejs from './assets/DRS_TextProofread.prebundleapp';
 
 let app_html = `
@@ -16,7 +15,7 @@ let app_html = `
   </body>
 </html>
 `
-const html_filename = "DRS_TextProofread_"+nanoid()+".html";
+const html_filename = "DRS_TextProofread_MainWindow.html";
 fs.writeFileSync(path.join(process.cwd(), html_filename), app_html);
 nw.Window.open(html_filename, {}, function(win) {
   win.width = 1280;
