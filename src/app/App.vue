@@ -170,7 +170,7 @@ export default {
       this.run = true;
 
       if(this.mode == "0"){
-        this.connection = new WebSocket("ws://192.168.0.16:8080");
+        this.connection = new WebSocket("wss://proofread.doujin-reviewers.info");
 
         this.connection.onerror = function(event) {
           this.error = "サーバーとの接続に失敗しました"
@@ -184,7 +184,15 @@ export default {
         }.bind(this)
 
         this.connection.onmessage = function(event) {
-          this.results.push(JSON.parse(event.data));
+          let recieve = JSON.parse(event.data);
+          if('error' in recieve){
+            this.error = "サーバーとの接続に失敗しました"
+            this.stop();
+          }else if('eof' in recieve){
+            this.stop(true);
+          }else{
+            this.results.push(recieve);
+          }
         }.bind(this)
       }else{
         const url = URL.createObjectURL(
