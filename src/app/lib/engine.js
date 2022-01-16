@@ -26,6 +26,7 @@ export class Engine {
   constructor(targets) {
     this.targets = targets;
     this.queue = [];
+    this.progress = {current_target: '', all:0, processed:0, progress: 0};
 
     this.fs = nw.require('fs');
     this.path = nw.require('path');
@@ -35,11 +36,17 @@ export class Engine {
   next(){
     if(this.queue.length == 0){
       if(this.targets.length != 0){
-        this.parser(this.targets.shift());
+        this.progress.current_target = this.targets.shift();
+        this.progress.processed = 0;
+        this.progress.progress = 0;
+        this.parser(this.progress.current_target);
+        this.progress.all = this.queue.length;
       }else{
         return "EOF"
       }
     }
+    this.progress.processed++;
+    this.progress.progress = Math.floor(this.progress.processed / this.progress.all * 100);
     return this.queue.shift();
   }
 

@@ -17,24 +17,24 @@
             <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" v-model="allcheck" :disabled="disable">全てチェックする</label>
           </div>
           <div class="flex flex-col justify-evenly items-start py-1">
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="CommonEvents.json" v-model="targets" :disabled="disable">コモンイベント</label>
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Weapons.json" v-model="targets" :disabled="disable">武器</label>
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Enemies.json" v-model="targets" :disabled="disable">敵キャラ</label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="CommonEvents.json" v-model="targets" :disabled="disable">コモンイベント<span v-show="targets.includes('CommonEvents.json') && (disable||finish||error)">|{{progress.CommonEvents}}%</span></label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Weapons.json" v-model="targets" :disabled="disable">武器<span v-show="targets.includes('Weapons.json') && (disable||finish||error)">|{{progress.Weapons}}%</span></label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Enemies.json" v-model="targets" :disabled="disable">敵キャラ<span v-show="targets.includes('Enemies.json') && (disable||finish||error)">|{{progress.Enemies}}%</span></label>
           </div>
           <div class="flex flex-col justify-evenly items-start py-1 pl-2">
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="MapInfos.json" v-model="targets" :disabled="disable">マップ</label>
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Armors.json" v-model="targets" :disabled="disable">防具</label>
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Troops.json" v-model="targets" :disabled="disable">敵グループ</label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="MapInfos.json" v-model="targets" :disabled="disable">マップ<span v-show="targets.includes('MapInfos.json') && (disable||finish||error)">|{{progress.MapInfos}}%</span></label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Armors.json" v-model="targets" :disabled="disable">防具<span v-show="targets.includes('Armors.json') && (disable||finish||error)">|{{progress.Armors}}%</span></label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Troops.json" v-model="targets" :disabled="disable">敵グループ<span v-show="targets.includes('Troops.json') && (disable||finish||error)">|{{progress.Troops}}%</span></label>
           </div>
           <div class="flex flex-col justify-evenly items-start py-1 px-2">
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Items.json" v-model="targets" :disabled="disable">アイテム</label>
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Classes.json" v-model="targets" :disabled="disable">職業</label>
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="States.json" v-model="targets" :disabled="disable">ステート</label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Items.json" v-model="targets" :disabled="disable">アイテム<span v-show="targets.includes('Items.json') && (disable||finish||error)">|{{progress.Items}}%</span></label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Classes.json" v-model="targets" :disabled="disable">職業<span v-show="targets.includes('Classes.json') && (disable||finish||error)">|{{progress.Classes}}%</span></label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="States.json" v-model="targets" :disabled="disable">ステート<span v-show="targets.includes('States.json') && (disable||finish||error)">|{{progress.States}}%</span></label>
           </div>
           <div class="flex flex-col justify-evenly items-start py-1">
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Actors.json" v-model="targets" :disabled="disable">アクター</label>
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Skills.json" v-model="targets" :disabled="disable">スキル</label>
-            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="System.json" v-model="targets" :disabled="disable">システム</label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Actors.json" v-model="targets" :disabled="disable">アクター<span v-show="targets.includes('Actors.json') && (disable||finish||error)">|{{progress.Actors}}%</span></label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="Skills.json" v-model="targets" :disabled="disable">スキル<span v-show="targets.includes('Skills.json') && (disable||finish||error)">|{{progress.Skills}}%</span></label>
+            <label :class="{'cursor-not-allowed': disable}"><input type="checkbox" value="System.json" v-model="targets" :disabled="disable">システム<span v-show="targets.includes('System.json') && (disable||finish||error)">|{{progress.System}}%</span></label>
           </div>
         </div>
         <div class="flex justify-center items-center border-b-2 border-gray-300 py-2">
@@ -102,6 +102,7 @@ export default {
       disable: false,
       finish: false,
       error: "",
+      progress: {},
     }
   },
   watch: {
@@ -113,6 +114,7 @@ export default {
         if(newVal.messages && newVal.messages.length != 0){
           this.results.push(formatResult(this.current_data.location, newVal, this.current_data.text));
         }
+        this.updateProgress();
         this.current_data = this.engine.next();
         if(this.current_data == "EOF"){
           this.stop(true);
@@ -168,6 +170,7 @@ export default {
       this.finish = false;
       this.error = "";
       this.run = true;
+      this.initProgress();
 
       if(this.mode == "0"){
         this.connection = new WebSocket("wss://proofread.doujin-reviewers.info");
@@ -206,6 +209,7 @@ export default {
         }.bind(this));
         this.engine = new Engine(this.targets.concat());
         this.current_data = this.engine.next();
+        this.updateProgress();
         this.postGameText(this.current_data.text);
       }
     },
@@ -218,6 +222,49 @@ export default {
       if(success){
         this.finish = true;
         this.error = "";
+      }
+    },
+    updateProgress: function () {
+      if(this.engine.progress.current_target == "CommonEvents.json"){
+        this.progress.CommonEvents = this.engine.progress.progress;
+      }else if(this.engine.progress.current_target == "Weapons.json"){
+        this.progress.Weapons = this.engine.progress.progress;
+      }else if(this.engine.progress.current_target == "Enemies.json"){
+        this.progress.Enemies = this.engine.progress.progress;
+      }else if(this.engine.progress.current_target == "MapInfos.json"){
+        this.progress.MapInfos = this.engine.progress.progress;
+      }else if(this.engine.progress.current_target == "Armors.json"){
+        this.progress.Armors = this.engine.progress.progress;
+      }else if(this.engine.progress.current_target == "Troops.json"){
+        this.progress.Troops = this.engine.progress.progress;
+      }else if(this.engine.progress.current_target == "Items.json"){
+        this.progress.Items = this.engine.progress.progress;
+      }else if(this.engine.progress.current_target == "Classes.json"){
+        this.progress.Classes = this.engine.progress.progress;
+      }else if(this.engine.progress.current_target == "States.json"){
+        this.progress.States = this.engine.progress.progress;
+      }else if(this.engine.progress.current_target == "Actors.json"){
+        this.progress.Actors = this.engine.progress.progress;
+      }else if(this.engine.progress.current_target == "Skills.json"){
+        this.progress.Skills = this.engine.progress.progress;
+      }else if(this.engine.progress.current_target == "System.json"){
+        this.progress.System = this.engine.progress.progress;
+      }
+    },
+    initProgress: function () {
+      this.progress = {
+        CommonEvents: 0,
+        Weapons: 0,
+        Enemies: 0,
+        MapInfos: 0,
+        Armors: 0,
+        Troops: 0,
+        Items: 0,
+        Classes: 0,
+        States: 0,
+        Actors: 0,
+        Skills: 0,
+        System: 0,
       }
     }
   },
