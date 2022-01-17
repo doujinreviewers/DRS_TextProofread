@@ -135,21 +135,8 @@ export default {
     }
   },
   methods: {
-    sendGameText: function (filename) {
-      const fs = nw.require('fs');
-      const path = nw.require('path');
-      let data_dir = path.join(process.cwd(), 'data');
-      this.connection.send(JSON.stringify({'filename':filename, 'json_data':JSON.parse(fs.readFileSync(path.join(data_dir, filename)))}));
-      if(filename == "MapInfos.json"){
-        let json = JSON.parse(fs.readFileSync(path.join(data_dir, filename)));
-        json.forEach(d => {
-          if(d){
-            let map_name = `Map${d.id.toString().padStart(3, '0')}.json`;
-            let map_json = JSON.parse(fs.readFileSync(path.join(data_dir, map_name)));
-            this.connection.send(JSON.stringify({'filename':map_name, 'json_data':map_json}));
-          };
-        });
-      }
+    sendGameText: function (text) {
+      this.connection.send(text)
     },
     postGameText: function(text){
       this.worker.postMessage({
@@ -181,9 +168,10 @@ export default {
         }.bind(this)
 
         this.connection.onopen = function(event) {
-          this.targets.forEach(json_name => {
-            this.sendGameText(json_name);
-          });
+          this.engine = new Engine(this.targets.concat());
+          this.current_data = this.engine.next();
+          this.updateProgress();
+          this.sendGameText(this.current_data.text);
         }.bind(this)
 
         this.connection.onmessage = function(event) {
@@ -191,10 +179,11 @@ export default {
           if('error' in recieve){
             this.error = "サーバーとの接続に失敗しました"
             this.stop();
-          }else if('eof' in recieve){
-            this.stop(true);
           }else{
             this.results.push(recieve);
+            this.current_data = this.engine.next();
+            this.updateProgress();
+            this.sendGameText(this.current_data.text);
           }
         }.bind(this)
       }else{
@@ -217,6 +206,7 @@ export default {
       this.run = false;
       this.disable = false;
       if(this.mode == "0"){
+        this.connection.send("__WS_CLOSE_REQUEST__");
         this.connection.close()
       }
       if(success){
