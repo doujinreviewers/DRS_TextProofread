@@ -7,7 +7,7 @@ let app_html = `
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Vue app</title>
+    <title>テキスト校正プラグイン</title>
   </head>
   <body>
     <div id="app"></div>

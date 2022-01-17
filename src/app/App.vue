@@ -135,9 +135,6 @@ export default {
     }
   },
   methods: {
-    sendGameText: function (text) {
-      this.connection.send(text)
-    },
     postGameText: function(text){
       this.worker.postMessage({
         command: "lint",
@@ -171,7 +168,7 @@ export default {
           this.engine = new Engine(this.targets.concat());
           this.current_data = this.engine.next();
           this.updateProgress();
-          this.sendGameText(this.current_data.text);
+          this.connection.send(JSON.stringify(this.current_data));
         }.bind(this)
 
         this.connection.onmessage = function(event) {
@@ -179,11 +176,16 @@ export default {
           if('error' in recieve){
             this.error = "サーバーとの接続に失敗しました"
             this.stop();
-          }else{
+            return;
+          }else if(!('result_ok' in recieve)){
             this.results.push(recieve);
-            this.current_data = this.engine.next();
-            this.updateProgress();
-            this.sendGameText(this.current_data.text);
+          }
+          this.current_data = this.engine.next();
+          this.updateProgress();
+          if(this.current_data == "EOF"){
+            this.stop(true);
+          }else{
+            this.connection.send(JSON.stringify(this.current_data));
           }
         }.bind(this)
       }else{
@@ -206,7 +208,7 @@ export default {
       this.run = false;
       this.disable = false;
       if(this.mode == "0"){
-        this.connection.send("__WS_CLOSE_REQUEST__");
+        this.connection.send('{"text":"__WS_CLOSE_REQUEST__"}');
         this.connection.close()
       }
       if(success){
