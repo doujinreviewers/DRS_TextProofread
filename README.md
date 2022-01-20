@@ -17,6 +17,12 @@
 textlintで静的チェックするだけです。
 検出できるのは不自然な助詞の連続、サ抜き言葉、サ入れ言葉、れ足す言葉などです。
 
+## 構成図
+![architecture](architecture.png)
+
+## Zenn
+[Vue.js+textlint+機械学習でRPGツクールMZ用文章校正プラグインを開発して得られた知見](https://zenn.dev/doujinreviewers/articles/d178ad9974180b)
+
 ## build
 1. `npm install`
 2. `npm run build-all`
